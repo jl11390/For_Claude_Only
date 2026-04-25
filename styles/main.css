@@ -408,14 +408,22 @@ img { display: block; max-width: 100%; }
   padding: 28px 0;
   border-top: 1px solid var(--border);
 }
-.footer .container {
+.footer-inner {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
 }
 .footer p {
   font-size: 0.85rem;
   color: var(--muted);
 }
+.admin-link {
+  font-size: 0.8rem;
+  color: var(--border);
+  text-decoration: none;
+  transition: color var(--ease);
+}
+.admin-link:hover { color: var(--muted); }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
