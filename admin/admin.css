@@ -29,61 +29,6 @@ body {
 }
 a { color: inherit; }
 
-/* ─── Login screen ───────────────────────────────────────────── */
-.login-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: var(--bg-alt);
-}
-
-.login-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-}
-
-.login-brand {
-  text-align: center;
-  margin-bottom: 32px;
-}
-.login-brand h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  margin: 16px 0 6px;
-}
-.login-brand p { font-size: 0.9rem; color: var(--muted); }
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.login-back {
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.875rem;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color var(--ease);
-}
-.login-back:hover { color: var(--text); }
-
-.error-text {
-  font-size: 0.875rem;
-  color: var(--danger-tx);
-  margin-top: -8px;
-}
-
 /* ─── Brand mark ─────────────────────────────────────────────── */
 .brand-mark {
   display: inline-flex;

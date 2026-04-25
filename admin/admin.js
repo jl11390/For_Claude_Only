@@ -2,9 +2,6 @@
 
 // ── Storage keys ──────────────────────────────────────────────────
 const KEY_CONTENT = 'cms_content';
-const KEY_SESSION = 'cms_session';
-
-const PASSWORD = '980227';
 
 // ── Default content ───────────────────────────────────────────────
 const DEFAULTS = {
@@ -63,23 +60,6 @@ function esc(str)    {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;')
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
-// ── Auth ──────────────────────────────────────────────────────────
-function tryLogin(password) {
-  if (password !== PASSWORD) return false;
-  sessionStorage.setItem(KEY_SESSION, '1');
-  return true;
-}
-
-function logout() {
-  sessionStorage.removeItem(KEY_SESSION);
-  document.getElementById('login-password').value = '';
-  document.getElementById('login-error').hidden = true;
-  document.getElementById('dashboard').hidden    = true;
-  document.getElementById('login-screen').hidden = false;
-}
-
-function isAuthed() { return sessionStorage.getItem(KEY_SESSION) === '1'; }
 
 // ── Content persistence ───────────────────────────────────────────
 function loadContent() {
@@ -285,28 +265,6 @@ function resetDefaults() {
 
 // ── Bootstrap ─────────────────────────────────────────────────────
 function bind() {
-  // Login
-  document.getElementById('login-form').addEventListener('submit', e => {
-    e.preventDefault();
-    const ok = tryLogin(document.getElementById('login-password').value);
-    if (ok) {
-      document.getElementById('login-screen').hidden = true;
-      document.getElementById('dashboard').hidden    = false;
-      switchSection('about');
-    } else {
-      document.getElementById('login-error').hidden = false;
-      document.getElementById('login-password').select();
-    }
-  });
-
-  // Clear login error on typing
-  document.getElementById('login-password').addEventListener('input', () => {
-    document.getElementById('login-error').hidden = true;
-  });
-
-  // Logout
-  document.getElementById('logout-btn').addEventListener('click', logout);
-
   // Sidebar navigation
   document.querySelectorAll('.sidebar-nav .nav-item[data-section]').forEach(a => {
     a.addEventListener('click', e => { e.preventDefault(); switchSection(a.dataset.section); });
@@ -367,11 +325,7 @@ function bind() {
 
 function init() {
   bind();
-  if (isAuthed()) {
-    document.getElementById('login-screen').hidden = true;
-    document.getElementById('dashboard').hidden    = false;
-    switchSection('about');
-  }
+  switchSection('about');
 }
 
 init();
