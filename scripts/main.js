@@ -29,10 +29,11 @@
       if (el) el.innerHTML = bio;
     }
     if (links?.length) {
-      const el = document.getElementById('cms-hero-links');
+      const el = document.getElementById('cms-contact-links');
       if (el) {
+        const email = c.contact?.email || 'alex@example.com';
         el.innerHTML =
-          '<a href="#contact" class="btn btn-dark">Get in touch</a>' +
+          `<a href="mailto:${email}" class="btn btn-dark" id="cms-get-in-touch">Get in touch</a>` +
           links.map(l =>
             `<a href="${l.url}" class="btn btn-outline" target="_blank" rel="noopener">${l.label}</a>`
           ).join('');
@@ -65,13 +66,13 @@
     const { subtitle, email, location, status } = c.contact;
     const subtitleEl = document.getElementById('cms-contact-subtitle');
     const emailEl    = document.getElementById('cms-email');
-    const emailNote  = document.getElementById('cms-email-note');
     const locationEl = document.getElementById('cms-location');
     const statusEl   = document.getElementById('cms-status');
     if (subtitleEl && subtitle) subtitleEl.textContent = subtitle;
     if (email) {
       if (emailEl)   { emailEl.textContent = email; emailEl.href = `mailto:${email}`; }
-      if (emailNote) { emailNote.textContent = email; emailNote.href = `mailto:${email}`; }
+      const getInTouch = document.getElementById('cms-get-in-touch');
+      if (getInTouch) getInTouch.href = `mailto:${email}`;
     }
     if (locationEl && location) locationEl.textContent = location;
     if (statusEl   && status)   statusEl.textContent   = status;
@@ -111,15 +112,3 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// ── Contact form ──────────────────────────────────────────────────
-// To send real emails: use Formspree (action="https://formspree.io/f/<id>" method="POST")
-// or wire up EmailJS inside this handler.
-const form        = document.getElementById('contactForm');
-const formSuccess = document.getElementById('formSuccess');
-if (form) {
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    form.hidden        = true;
-    formSuccess.hidden = false;
-  });
-}

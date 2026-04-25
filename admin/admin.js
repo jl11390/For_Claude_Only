@@ -1,12 +1,11 @@
 'use strict';
 
 // ── Storage keys ──────────────────────────────────────────────────
-const KEY_CONTENT  = 'cms_content';
-const KEY_SESSION  = 'cms_session';
-const KEY_PASSWORD = 'cms_password_hash';
+const KEY_CONTENT = 'cms_content';
+const KEY_SESSION = 'cms_session';
 
-// SHA-256 of "admin"
-const DEFAULT_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+// SHA-256 of "980227" — fixed, not user-changeable
+const PASSWORD_HASH = '37abceed18f53fa4d4807531cc9196efa6e2aaf03385e0c9041caba62713ec1c';
 
 // ── Default content ───────────────────────────────────────────────
 const DEFAULTS = {
@@ -73,8 +72,7 @@ async function sha256(str) {
 
 // ── Auth ──────────────────────────────────────────────────────────
 async function tryLogin(password) {
-  const expected = localStorage.getItem(KEY_PASSWORD) || DEFAULT_HASH;
-  if (await sha256(password) !== expected) return false;
+  if (await sha256(password) !== PASSWORD_HASH) return false;
   sessionStorage.setItem(KEY_SESSION, '1');
   return true;
 }
@@ -282,23 +280,6 @@ function saveContact() {
 }
 
 // ── Settings ──────────────────────────────────────────────────────
-async function savePassword() {
-  const current  = document.getElementById('pwd-current').value;
-  const next     = document.getElementById('pwd-new').value;
-  const confirm  = document.getElementById('pwd-confirm').value;
-
-  if (!current || !next || !confirm) { toast('Fill in all three fields', 'error'); return; }
-  if (next !== confirm)              { toast("New passwords don't match", 'error'); return; }
-
-  const expected = localStorage.getItem(KEY_PASSWORD) || DEFAULT_HASH;
-  if (await sha256(current) !== expected) { toast('Current password is incorrect', 'error'); return; }
-
-  localStorage.setItem(KEY_PASSWORD, await sha256(next));
-  ['pwd-current', 'pwd-new', 'pwd-confirm'].forEach(id =>
-    (document.getElementById(id).value = ''));
-  toast('Password updated');
-}
-
 function resetDefaults() {
   if (!confirm('Reset all content to defaults? This cannot be undone.')) return;
   localStorage.removeItem(KEY_CONTENT);
@@ -387,7 +368,6 @@ function bind() {
   document.getElementById('save-contact').addEventListener('click', saveContact);
 
   // Settings
-  document.getElementById('save-password').addEventListener('click', savePassword);
   document.getElementById('reset-defaults').addEventListener('click', resetDefaults);
 }
 
