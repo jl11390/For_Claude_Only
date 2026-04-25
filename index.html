@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alex Chen</title>
+  <meta name="description" content="Software engineer, writer, and builder based in San Francisco.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Alex Chen</a>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#blog">Writing</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="#about">About</a>
+      <a href="#blog">Writing</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ── ABOUT ─────────────────────────────────────────── -->
+  <section class="hero" id="about">
+    <div class="container">
+      <span class="eyebrow">Software Engineer</span>
+      <h1>Hi, I'm Alex&nbsp;Chen.</h1>
+      <p class="hero-bio">
+        I build products that scale. Currently at <strong>Acme Corp</strong>,
+        previously at Stripe and Airbnb. I write about distributed systems,
+        product thinking, and the intersection of AI and software craft.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-dark">Get in touch</a>
+        <a href="https://github.com" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com" class="btn btn-outline" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://twitter.com" class="btn btn-outline" target="_blank" rel="noopener">X / Twitter</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BLOG ──────────────────────────────────────────── -->
+  <section class="section section--alt" id="blog">
+    <div class="container">
+      <div class="section-head">
+        <h2>Writing</h2>
+        <p>Thoughts on engineering, product, and technology.</p>
+      </div>
+
+      <div class="post-grid">
+
+        <article class="post-card">
+          <div class="post-meta">
+            <time>April 15, 2025</time>
+            <span class="tag">Engineering</span>
+          </div>
+          <h3><a href="#">Building Scalable Systems: Lessons from 10 Years in Tech</a></h3>
+          <p>Distributed systems are notoriously hard to get right. Here's what I've learned from building infrastructure that serves millions of users without waking you up at 3&nbsp;am.</p>
+          <a class="post-link" href="#">Read more →</a>
+        </article>
+
+        <article class="post-card">
+          <div class="post-meta">
+            <time>March 28, 2025</time>
+            <span class="tag">Product</span>
+          </div>
+          <h3><a href="#">The Art of Saying No: Prioritization in a Fast-Moving Startup</a></h3>
+          <p>Every product team faces the eternal tension between building what users ask for and building what they actually need. A framework that's helped me stay honest.</p>
+          <a class="post-link" href="#">Read more →</a>
+        </article>
+
+        <article class="post-card">
+          <div class="post-meta">
+            <time>February 10, 2025</time>
+            <span class="tag">AI</span>
+          </div>
+          <h3><a href="#">Why AI Won't Replace Engineers — But Will Change Everything</a></h3>
+          <p>The rise of LLMs and coding assistants has sparked plenty of hyperbole. Here's a grounded take on what genuinely shifts and what stays the same.</p>
+          <a class="post-link" href="#">Read more →</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ───────────────────────────────────────── -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-head">
+        <h2>Contact</h2>
+        <p>Have a question or want to work together? I'd love to hear from you.</p>
+      </div>
+
+      <div class="contact-layout">
+
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="label">Email</span>
+            <a href="mailto:alex@example.com">alex@example.com</a>
+          </div>
+          <div class="contact-item">
+            <span class="label">Location</span>
+            <span>San Francisco, CA</span>
+          </div>
+          <div class="contact-item">
+            <span class="label">Status</span>
+            <span>Open to opportunities</span>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="What's on your mind?" required></textarea>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-dark btn-full">Send message</button>
+            <p class="form-note">
+              <!-- Wire up to Formspree, EmailJS, or your own API endpoint. -->
+              Alternatively, email me directly at
+              <a href="mailto:alex@example.com">alex@example.com</a>.
+            </p>
+          </div>
+          <div class="form-success" id="formSuccess" hidden>
+            Thanks for reaching out! I'll get back to you soon.
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2025 Alex Chen</p>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
