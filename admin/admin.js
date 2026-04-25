@@ -4,8 +4,7 @@
 const KEY_CONTENT = 'cms_content';
 const KEY_SESSION = 'cms_session';
 
-// SHA-256 of "980227" — fixed, not user-changeable
-const PASSWORD_HASH = '37abceed18f53fa4d4807531cc9196efa6e2aaf03385e0c9041caba62713ec1c';
+const PASSWORD = '980227';
 
 // ── Default content ───────────────────────────────────────────────
 const DEFAULTS = {
@@ -65,14 +64,9 @@ function esc(str)    {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 // ── Auth ──────────────────────────────────────────────────────────
-async function tryLogin(password) {
-  if (await sha256(password) !== PASSWORD_HASH) return false;
+function tryLogin(password) {
+  if (password !== PASSWORD) return false;
   sessionStorage.setItem(KEY_SESSION, '1');
   return true;
 }
@@ -292,9 +286,9 @@ function resetDefaults() {
 // ── Bootstrap ─────────────────────────────────────────────────────
 function bind() {
   // Login
-  document.getElementById('login-form').addEventListener('submit', async e => {
+  document.getElementById('login-form').addEventListener('submit', e => {
     e.preventDefault();
-    const ok = await tryLogin(document.getElementById('login-password').value);
+    const ok = tryLogin(document.getElementById('login-password').value);
     if (ok) {
       document.getElementById('login-screen').hidden = true;
       document.getElementById('dashboard').hidden    = false;
