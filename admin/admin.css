@@ -148,6 +148,13 @@ a { color: inherit; }
 }
 .panel-header p { font-size: 0.9rem; color: var(--muted); }
 
+.panel-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 /* ─── Card ───────────────────────────────────────────────────── */
 .card {
   background: var(--bg);

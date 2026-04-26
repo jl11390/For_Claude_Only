@@ -5,6 +5,9 @@ const KEY_CONTENT = 'cms_content';
 
 // ── Default content ───────────────────────────────────────────────
 const DEFAULTS = {
+  site: {
+    title: 'Alex Chen'
+  },
   about: {
     name: 'Alex Chen',
     role: 'Software Engineer',
@@ -85,15 +88,30 @@ function toast(msg, type = 'success') {
   }, 2800);
 }
 
+// ── General ───────────────────────────────────────────────────────
+function renderGeneral() {
+  const c = loadContent();
+  document.getElementById('site-title').value = c.site?.title ?? '';
+}
+
+function saveGeneral() {
+  const c = loadContent();
+  if (!c.site) c.site = {};
+  c.site.title = document.getElementById('site-title').value.trim();
+  saveContent(c);
+  toast('General settings saved');
+}
+
 // ── Navigation ────────────────────────────────────────────────────
 function switchSection(name) {
-  ['about', 'blog', 'contact', 'settings'].forEach(s => {
+  ['general', 'about', 'blog', 'contact', 'settings'].forEach(s => {
     document.getElementById(`panel-${s}`).hidden = (s !== name);
   });
   document.querySelectorAll('.sidebar-nav .nav-item').forEach(a => {
     a.classList.toggle('active', a.dataset.section === name);
   });
   // Re-render active panel to reflect latest saved state
+  if (name === 'general')  renderGeneral();
   if (name === 'about')    renderAbout();
   if (name === 'blog')     renderBlog();
   if (name === 'contact')  renderContact();
@@ -253,10 +271,56 @@ function saveContact() {
   toast('Contact section saved');
 }
 
+// ── LinkedIn JSON import ──────────────────────────────────────────
+function importLinkedinJson(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    let incoming;
+    try {
+      incoming = JSON.parse(e.target.result);
+    } catch (_) {
+      toast('Invalid JSON file', 'error');
+      return;
+    }
+
+    if (!Array.isArray(incoming) || !incoming.length) {
+      toast('No posts found in file', 'error');
+      return;
+    }
+
+    const c = loadContent();
+    let added = 0, skipped = 0;
+
+    incoming.forEach(p => {
+      if (!p.title) { skipped++; return; }
+      const post = {
+        id:      p.id      || ('li-' + uid()),
+        date:    p.date    || '',
+        tag:     p.tag     || 'LinkedIn',
+        title:   p.title,
+        excerpt: p.excerpt || '',
+        url:     p.url     || '#',
+      };
+      const exists = c.blog.posts.some(ep => ep.id === post.id || ep.title === post.title);
+      if (exists) { skipped++; return; }
+      c.blog.posts.unshift(post);
+      added++;
+    });
+
+    c.blog.posts = c.blog.posts.slice(0, 10);
+    saveContent(c);
+    renderBlog();
+    toast(`Imported ${added} post(s)${skipped ? `, ${skipped} skipped` : ''}`);
+  };
+  reader.readAsText(file);
+}
+
 // ── Settings ──────────────────────────────────────────────────────
 function resetDefaults() {
   if (!confirm('Reset all content to defaults? This cannot be undone.')) return;
   localStorage.removeItem(KEY_CONTENT);
+  renderGeneral();
   renderAbout();
   renderBlog();
   renderContact();
@@ -269,6 +333,9 @@ function bind() {
   document.querySelectorAll('.sidebar-nav .nav-item[data-section]').forEach(a => {
     a.addEventListener('click', e => { e.preventDefault(); switchSection(a.dataset.section); });
   });
+
+  // General
+  document.getElementById('save-general').addEventListener('click', saveGeneral);
 
   // About
   document.getElementById('save-about').addEventListener('click', saveAbout);
@@ -294,6 +361,14 @@ function bind() {
 
   // Blog
   document.getElementById('new-post-btn').addEventListener('click', () => openModal());
+
+  document.getElementById('import-linkedin-btn').addEventListener('click', () => {
+    document.getElementById('import-linkedin-file').click();
+  });
+  document.getElementById('import-linkedin-file').addEventListener('change', e => {
+    importLinkedinJson(e.target.files[0]);
+    e.target.value = '';
+  });
 
   document.getElementById('posts-list').addEventListener('click', e => {
     const edit = e.target.closest('.edit-post');
@@ -325,7 +400,7 @@ function bind() {
 
 function init() {
   bind();
-  switchSection('about');
+  switchSection('general');
 }
 
 init();

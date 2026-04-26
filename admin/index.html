@@ -22,6 +22,10 @@
         <span class="sidebar-title">Admin Console</span>
       </div>
       <nav class="sidebar-nav">
+        <a href="#" class="nav-item" data-section="general">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          General
+        </a>
         <a href="#" class="nav-item" data-section="about">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           About
@@ -50,6 +54,28 @@
 
   <!-- Main content area -->
   <main class="main-content">
+
+    <!-- ── General Panel ────────────────────────────────── -->
+    <div id="panel-general" class="panel" hidden>
+      <div class="panel-header">
+        <div>
+          <h2>General</h2>
+          <p>Site-wide settings shown across all pages.</p>
+        </div>
+        <button id="save-general" class="btn btn-dark">Save changes</button>
+      </div>
+
+      <div class="card">
+        <div class="card-section">
+          <p class="card-label">Browser tab</p>
+          <div class="field">
+            <label for="site-title">Site title</label>
+            <input id="site-title" type="text" placeholder="e.g. Alex Chen">
+            <span class="field-hint">Appears in the browser tab and as the nav logo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ── About Panel ──────────────────────────────────── -->
     <div id="panel-about" class="panel" hidden>
@@ -99,7 +125,11 @@
           <h2>Blog</h2>
           <p>Create, edit, and remove blog posts.</p>
         </div>
-        <button id="new-post-btn" class="btn btn-dark">+ New post</button>
+        <div class="panel-header-actions">
+          <button id="import-linkedin-btn" class="btn btn-outline">Import from JSON</button>
+          <input id="import-linkedin-file" type="file" accept=".json" hidden>
+          <button id="new-post-btn" class="btn btn-dark">+ New post</button>
+        </div>
       </div>
 
       <div class="card card--flush">
