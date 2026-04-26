@@ -256,6 +256,26 @@ a { color: inherit; }
 .btn-sm   { padding: 6px 12px; font-size: 0.8rem; }
 .btn-full { width: 100%; }
 
+.btn-linkedin {
+  background: #0A66C2;
+  color: #fff;
+  border-color: #0A66C2;
+  gap: 7px;
+}
+.btn-linkedin:hover:not(:disabled) { background: #004182; border-color: #004182; }
+.btn-linkedin:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ─── Icon button ────────────────────────────────────────────── */
 .icon-btn {
   display: inline-flex;

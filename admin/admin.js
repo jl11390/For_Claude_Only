@@ -22,28 +22,34 @@ const DEFAULTS = {
     subtitle: 'Thoughts on engineering, product, and technology.',
     posts: [
       {
-        id: 'post-1',
-        date:    'April 15, 2025',
-        tag:     'Engineering',
-        title:   'Building Scalable Systems: Lessons from 10 Years in Tech',
-        excerpt: "Distributed systems are notoriously hard to get right. Here's what I've learned from building infrastructure that serves millions of users without waking you up at 3 am.",
-        url:     '#'
+        id: 'li-mock-1', date: 'April 23, 2026', tag: 'LinkedIn',
+        title: "Thrilled to share that I've joined a new chapter in my career!",
+        excerpt: "Thrilled to share that I've joined a new chapter in my career! Excited to bring my experience in product and engineering to drive meaningful impact. The journey continues — stay tuned for more updates.",
+        url: 'https://www.linkedin.com/in/lijunze/recent-activity/all/'
       },
       {
-        id: 'post-2',
-        date:    'March 28, 2025',
-        tag:     'Product',
-        title:   'The Art of Saying No: Prioritization in a Fast-Moving Startup',
-        excerpt: "Every product team faces the eternal tension between building what users ask for and building what they actually need. A framework that's helped me stay honest.",
-        url:     '#'
+        id: 'li-mock-2', date: 'April 16, 2026', tag: 'LinkedIn',
+        title: "Lessons from building 0→1 products: what I wish I knew earlier",
+        excerpt: "Lessons from building 0→1 products: what I wish I knew earlier. The hardest part isn't the technology — it's figuring out what to build in the first place. Three things I keep coming back to: talk to users obsessively, ship small and learn fast, and never confuse motion for progress.",
+        url: 'https://www.linkedin.com/in/lijunze/recent-activity/all/'
       },
       {
-        id: 'post-3',
-        date:    'February 10, 2025',
-        tag:     'AI',
-        title:   "Why AI Won't Replace Engineers — But Will Change Everything",
-        excerpt: "The rise of LLMs and coding assistants has sparked plenty of hyperbole. Here's a grounded take on what genuinely shifts and what stays the same.",
-        url:     '#'
+        id: 'li-mock-3', date: 'April 8, 2026', tag: 'LinkedIn',
+        title: "AI is reshaping every product team I know — here's what's actually changing",
+        excerpt: "AI is reshaping every product team I know — here's what's actually changing. It's not that engineers are being replaced. It's that the feedback loop from idea to working prototype has collapsed from weeks to hours. The teams winning aren't the ones with the most engineers — they're the ones who can learn the fastest.",
+        url: 'https://www.linkedin.com/in/lijunze/recent-activity/all/'
+      },
+      {
+        id: 'li-mock-4', date: 'March 30, 2026', tag: 'LinkedIn',
+        title: "Attended an incredible summit on product leadership last week",
+        excerpt: "Attended an incredible summit on product leadership last week. The single idea that stuck with me: the best product managers aren't advocates for users OR the business — they hold both in tension at once. Easy to say. Surprisingly hard to practice under pressure.",
+        url: 'https://www.linkedin.com/in/lijunze/recent-activity/all/'
+      },
+      {
+        id: 'li-mock-5', date: 'March 22, 2026', tag: 'LinkedIn',
+        title: "On the topic of career growth: the most underrated skill is taste",
+        excerpt: "On the topic of career growth: the most underrated skill is taste. Technical skills get you in the room. Communication gets you a seat at the table. But taste — the ability to recognize what's excellent before anyone else does — is what separates good from great in any craft.",
+        url: 'https://www.linkedin.com/in/lijunze/recent-activity/all/'
       }
     ]
   },
@@ -271,47 +277,76 @@ function saveContact() {
   toast('Contact section saved');
 }
 
-// ── LinkedIn JSON import ──────────────────────────────────────────
+// ── LinkedIn live sync (calls local scraper server) ───────────────
+const SCRAPER_URL = 'http://127.0.0.1:3001/api/scrape';
+
+async function syncLinkedin() {
+  const btn     = document.getElementById('sync-linkedin-btn');
+  const label   = document.getElementById('sync-linkedin-label');
+  const spinner = document.getElementById('sync-linkedin-spinner');
+
+  btn.disabled      = true;
+  label.textContent = 'Syncing…';
+  spinner.hidden    = false;
+
+  try {
+    const res = await fetch(SCRAPER_URL, { signal: AbortSignal.timeout(120000) });
+    const data = await res.json();
+
+    if (!data.ok) throw new Error(data.error || 'Scraper returned an error');
+
+    importPosts(data.posts);
+  } catch (err) {
+    let msg = err.message;
+    if (err.name === 'TypeError' || msg.includes('fetch')) {
+      msg = 'Cannot reach scraper server. Start it with: NODE_PATH=/opt/node22/lib/node_modules node scraper/server.js';
+    }
+    toast(msg, 'error');
+    console.error('[sync]', err);
+  } finally {
+    btn.disabled      = false;
+    label.textContent = 'Sync LinkedIn';
+    spinner.hidden    = true;
+  }
+}
+
+// ── LinkedIn JSON import (shared by file upload and sync button) ──
+function importPosts(incoming) {
+  if (!Array.isArray(incoming) || !incoming.length) {
+    toast('No posts found', 'error'); return;
+  }
+  const c = loadContent();
+  let added = 0, skipped = 0;
+
+  incoming.forEach(p => {
+    if (!p.title) { skipped++; return; }
+    const post = {
+      id:      p.id      || ('li-' + uid()),
+      date:    p.date    || '',
+      tag:     p.tag     || 'LinkedIn',
+      title:   p.title,
+      excerpt: p.excerpt || '',
+      url:     p.url     || '#',
+    };
+    const exists = c.blog.posts.some(ep => ep.id === post.id || ep.title === post.title);
+    if (exists) { skipped++; return; }
+    c.blog.posts.unshift(post);
+    added++;
+  });
+
+  c.blog.posts = c.blog.posts.slice(0, 10);
+  saveContent(c);
+  renderBlog();
+  toast(`Imported ${added} post(s)${skipped ? `, ${skipped} skipped` : ''}`);
+}
+
 function importLinkedinJson(file) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function (e) {
-    let incoming;
-    try {
-      incoming = JSON.parse(e.target.result);
-    } catch (_) {
-      toast('Invalid JSON file', 'error');
-      return;
-    }
-
-    if (!Array.isArray(incoming) || !incoming.length) {
-      toast('No posts found in file', 'error');
-      return;
-    }
-
-    const c = loadContent();
-    let added = 0, skipped = 0;
-
-    incoming.forEach(p => {
-      if (!p.title) { skipped++; return; }
-      const post = {
-        id:      p.id      || ('li-' + uid()),
-        date:    p.date    || '',
-        tag:     p.tag     || 'LinkedIn',
-        title:   p.title,
-        excerpt: p.excerpt || '',
-        url:     p.url     || '#',
-      };
-      const exists = c.blog.posts.some(ep => ep.id === post.id || ep.title === post.title);
-      if (exists) { skipped++; return; }
-      c.blog.posts.unshift(post);
-      added++;
-    });
-
-    c.blog.posts = c.blog.posts.slice(0, 10);
-    saveContent(c);
-    renderBlog();
-    toast(`Imported ${added} post(s)${skipped ? `, ${skipped} skipped` : ''}`);
+    let data;
+    try { data = JSON.parse(e.target.result); } catch (_) { toast('Invalid JSON file', 'error'); return; }
+    importPosts(data);
   };
   reader.readAsText(file);
 }
@@ -361,6 +396,8 @@ function bind() {
 
   // Blog
   document.getElementById('new-post-btn').addEventListener('click', () => openModal());
+
+  document.getElementById('sync-linkedin-btn').addEventListener('click', syncLinkedin);
 
   document.getElementById('import-linkedin-btn').addEventListener('click', () => {
     document.getElementById('import-linkedin-file').click();
